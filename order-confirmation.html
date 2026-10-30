@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f1e8">
+  <meta name="description" content="Your Good Ground Cafe order confirmation.">
+  <title>Order Confirmed | Good Ground Cafe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="cart.js?v=2" defer></script>
+  <script src="order-confirmation.js?v=2" defer></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f1e8;
+      --surface: #fffdf8;
+      --ink: #29251f;
+      --muted: #71695f;
+      --accent: #a44f35;
+      --accent-dark: #793b29;
+      --green: #435b48;
+      --line: #dfd7ca;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "DM Sans", sans-serif;
+      font-family: var(--sans);
+      color: var(--ink);
+      background: var(--paper);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(840px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar { display: flex; min-height: 82px; align-items: center; justify-content: space-between; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; }
+    .brand-mark { display: grid; width: 38px; aspect-ratio: 1; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-family: Georgia, serif; font-size: 1.25rem; }
+    .brand-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; }
+    main { padding-block: 48px 84px; }
+    .confirmation-card { overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
+    .confirmation-head { padding: 32px 38px 28px; border-bottom: 1px solid var(--line); background: #f4f6f1; }
+    .success-mark { display: grid; width: 43px; height: 43px; place-items: center; margin-bottom: 18px; border-radius: 50%; background: #dce5d8; color: var(--green); font-size: 1.35rem; font-weight: 700; }
+    .eyebrow { margin: 0 0 9px; color: var(--accent); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1, h2, p { margin-top: 0; }
+    h1, h2 { font-family: var(--serif); font-weight: 600; }
+    h1 { margin-bottom: 9px; font-size: clamp(2.1rem, 6vw, 3.2rem); line-height: 1.1; }
+    .confirmation-copy { margin: 0; color: var(--muted); font-size: .95rem; }
+    .sms-preview { max-width: 390px; margin-top: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #f7f8f5; }
+    .sms-preview-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 8px; }
+    .sms-preview-label { color: var(--green); font-size: .72rem; font-weight: 700; }
+    .sms-preview-recipient { color: var(--muted); font-size: .7rem; }
+    .sms-preview-message { margin: 0; padding: 9px 11px; border-radius: 10px 10px 10px 2px; background: #e8eee5; color: var(--ink); font-size: .8rem; line-height: 1.5; overflow-wrap: anywhere; }
+    .sms-preview-sender { font-weight: 700; }
+    .order-number-block { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 23px; padding-top: 18px; border-top: 1px solid #dce3d8; }
+    .order-number-label, .order-number { margin: 0; font-size: .8rem; }
+    .order-number-label { color: var(--muted); }
+    .order-number { color: var(--green); font-weight: 700; letter-spacing: .04em; }
+    .confirmation-body { padding: 28px 38px 32px; }
+    .eta-banner { display: flex; align-items: center; gap: 13px; margin-bottom: 26px; padding: 14px 16px; border-left: 3px solid var(--accent); background: #f8f1e8; }
+    .eta-icon { color: var(--accent); font-size: 1.35rem; }
+    .eta-banner strong { display: block; font-size: .92rem; }
+    .eta-banner span:last-child { color: var(--muted); font-size: .8rem; }
+    .section-title { margin-bottom: 12px; font-family: var(--serif); font-size: 1.25rem; }
+    .order-items { margin: 0; padding: 0; list-style: none; }
+    .order-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding-block: 11px; border-bottom: 1px solid var(--line); }
+    .item-name { margin: 0; font-size: .9rem; font-weight: 700; }
+    .item-quantity { color: var(--muted); font-size: .8rem; }
+    .item-price { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-size: .88rem; font-weight: 700; white-space: nowrap; }
+    .order-total { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-block: 17px 24px; }
+    .order-total span { color: var(--muted); font-size: .88rem; }
+    .order-total strong { color: var(--accent); font-family: var(--serif); font-size: 1.45rem; white-space: nowrap; }
+    .delivery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; padding: 19px 0 25px; border-top: 1px solid var(--line); }
+    .detail-label { display: block; margin-bottom: 5px; color: var(--muted); font-size: .73rem; font-weight: 700; text-transform: uppercase; }
+    .detail-value { margin: 0; font-size: .88rem; white-space: pre-line; overflow-wrap: anywhere; }
+    .home-button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 10px 18px; border: 1px solid var(--accent); border-radius: 3px; background: var(--accent); color: #fffaf3; font-size: .88rem; font-weight: 700; transition: background .2s, transform .2s; }
+    .home-button:hover { transform: translateY(-2px); border-color: var(--accent-dark); background: var(--accent-dark); }
+    .no-order { padding: 38px; border: 1px solid var(--line); background: var(--surface); text-align: center; }
+    .no-order[hidden], .confirmation-card[hidden] { display: none; }
+    .no-order h1 { font-size: 2rem; }
+    .no-order p { color: var(--muted); }
+    footer { border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; min-height: 76px; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: .82rem; }
+    .footer-inner p { margin: 0; }
+    @media (max-width: 560px) {
+      .wrap { width: calc(100% - 28px); }
+      .topbar { min-height: 72px; }
+      .brand-mark { width: 34px; }
+      .brand-name { font-size: 1rem; }
+      main { padding-block: 25px 56px; }
+      .confirmation-head { padding: 24px 20px 21px; }
+      .confirmation-body { padding: 22px 20px 24px; }
+      .delivery-grid { grid-template-columns: 1fr; gap: 14px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; justify-content: center; padding-block: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar wrap">
+    <a class="brand" href="index.html#home" aria-label="Good Ground Cafe home"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-name">Good Ground Cafe</span></a>
+  </header>
+  <main class="wrap">
+    <section class="confirmation-card" id="confirmation-card" aria-labelledby="confirmation-title" hidden>
+      <header class="confirmation-head">
+        <span class="success-mark" aria-hidden="true">✓</span>
+        <p class="eyebrow">A GOOD THING IS ON ITS WAY</p>
+        <h1 id="confirmation-title">Thank you, <span id="customer-name"></span>.</h1>
+        <p class="confirmation-copy">Your order is confirmed. We’re getting it ready with care.</p>
+        <aside class="sms-preview" aria-label="Demo SMS preview">
+          <div class="sms-preview-heading">
+            <span class="sms-preview-label">Demo SMS preview</span>
+            <span class="sms-preview-recipient">To mobile number <span id="sms-phone-number"></span></span>
+          </div>
+          <p class="sms-preview-message"><span class="sms-preview-sender">Good Ground Cafe:</span> Hi <span id="sms-customer-name"></span>, your order <span id="sms-order-number"></span> has been placed and will be delivered in 30 mins. Thank you!</p>
+        </aside>
+        <div class="order-number-block"><p class="order-number-label">ORDER NUMBER</p><p class="order-number" id="order-number"></p></div>
+      </header>
+      <div class="confirmation-body">
+        <div class="eta-banner"><span class="eta-icon" aria-hidden="true">◷</span><div><strong>Estimated time: <span id="estimated-time"></span> minutes</strong><span>We’ll have your order ready soon.</span></div></div>
+        <section aria-labelledby="items-title"><h2 class="section-title" id="items-title">Items ordered</h2><ul class="order-items" id="order-items"></ul></section>
+        <div class="order-total"><span>Total paid at pickup / delivery</span><strong id="order-total"></strong></div>
+        <div class="delivery-grid">
+          <div><span class="detail-label">Delivery address</span><p class="detail-value" id="delivery-address"></p></div>
+          <div><span class="detail-label">Cafe location</span><p class="detail-value">Good Ground Cafe, 12 Cathedral Road, Gopalapuram, Chennai, Tamil Nadu 600086</p></div>
+          <div><span class="detail-label">Order type</span><p class="detail-value" id="fulfillment"></p></div>
+          <div><span class="detail-label">Phone</span><p class="detail-value" id="phone-number"></p></div>
+          <div><span class="detail-label">Payment option</span><p class="detail-value" id="payment-method"></p></div>
+        </div>
+        <a class="home-button" href="index.html#home">Back to Home</a>
+      </div>
+    </section>
+    <section class="no-order" id="no-order" hidden>
+      <p class="eyebrow">GOOD GROUND CAFE</p><h1>No recent order found.</h1><p>Place an order to see its confirmation details here.</p><a class="home-button" href="index.html#home">Back to Home</a>
+    </section>
+  </main>
+  <footer><div class="footer-inner wrap"><a class="brand" href="index.html#home"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-name">Good Ground Cafe</span></a><p>Good Ground Cafe, 12 Cathedral Road, Gopalapuram, Chennai, Tamil Nadu 600086</p><p>Good coffee. Good company. Every day.</p><p>© Good Ground Cafe</p></div></footer>
+</body>
+</html>

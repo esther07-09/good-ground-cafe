@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f1e8">
+  <meta name="description" content="Checkout your Good Ground Cafe order.">
+  <title>Checkout | Good Ground Cafe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="cart.js?v=4" defer></script>
+  <script src="checkout.js?v=3" defer></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f1e8;
+      --surface: #fffdf8;
+      --ink: #29251f;
+      --muted: #71695f;
+      --accent: #a44f35;
+      --accent-dark: #793b29;
+      --green: #435b48;
+      --line: #dfd7ca;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "DM Sans", sans-serif;
+      font-family: var(--sans);
+      color: var(--ink);
+      background: var(--paper);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar { display: flex; min-height: 82px; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; }
+    .brand-mark { display: grid; width: 38px; aspect-ratio: 1; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-family: Georgia, serif; font-size: 1.25rem; }
+    .brand-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; }
+    .cart-nav { display: flex; align-items: center; gap: 22px; color: var(--muted); font-size: .9rem; font-weight: 600; }
+    .cart-nav a:hover { color: var(--accent); }
+    .cart-count { display: inline-grid; min-width: 20px; height: 20px; place-items: center; padding-inline: 5px; border-radius: 999px; background: var(--accent); color: #fffaf3; font-size: .7rem; }
+    main { min-height: calc(100vh - 160px); padding-block: 62px 88px; }
+    .page-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+    .eyebrow { margin: 0 0 10px; color: var(--accent); font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 600; }
+    h1 { margin-bottom: 0; font-size: clamp(2.4rem, 6vw, 3.8rem); line-height: 1.08; }
+    .back-link { color: var(--accent); font-size: .9rem; font-weight: 700; }
+    .back-link::before { content: "← "; }
+    .checkout-layout { display: grid; grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr); align-items: start; gap: 20px; }
+    .panel { border: 1px solid var(--line); background: var(--surface); }
+    .summary-panel, .details-panel { padding: 24px; }
+    .panel-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .panel-heading h2 { margin: 0; font-size: 1.45rem; }
+    .panel-heading p { margin: 0 0 5px; }
+    .item-count { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+    .summary-items { display: grid; gap: 0; }
+    .summary-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+    .summary-item-name { margin: 0; font-size: .92rem; font-weight: 700; }
+    .summary-item-quantity { color: var(--muted); font-size: .8rem; }
+    .summary-item-price { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--ink); font-size: .88rem; font-weight: 700; white-space: nowrap; }
+    .summary-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-top: 19px; }
+    .summary-total span { color: var(--muted); font-size: .9rem; }
+    .summary-total strong { color: var(--accent); font-family: var(--serif); font-size: 1.55rem; white-space: nowrap; }
+    .summary-subtotal { display: flex; justify-content: space-between; color: var(--muted); font-size: .84rem; }
+    .summary-discounts { display: grid; gap: 6px; margin-top: 8px; }
+    .summary-discount, .summary-offer-message { display: flex; justify-content: space-between; gap: 10px; margin: 0; color: var(--green); font-size: .8rem; }
+    .summary-discount strong { white-space: nowrap; }
+    .summary-offer-message { color: var(--muted); }
+    .details-panel .panel-heading { margin-bottom: 15px; }
+    .checkout-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 16px; }
+    .field { display: grid; align-content: start; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label, legend { color: #554a41; font-size: .83rem; font-weight: 700; }
+    .field input, .field textarea { width: 100%; min-height: 45px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 2px; outline: none; background: var(--surface); color: var(--ink); }
+    .field textarea { min-height: 84px; resize: vertical; }
+    .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+    .field input::placeholder, .field textarea::placeholder { color: #9a8f84; }
+    fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+    legend { margin-bottom: 8px; }
+    .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .choice { position: relative; }
+    .choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .choice label { display: flex; min-height: 44px; align-items: center; gap: 9px; padding: 9px 11px; border: 1px solid var(--line); color: #554a41; cursor: pointer; font-size: .82rem; font-weight: 600; transition: border-color .15s, background .15s; }
+    .choice label::before { width: 14px; height: 14px; flex: 0 0 14px; border: 1px solid #b7aa9c; border-radius: 50%; content: ""; }
+    .choice input:checked + label { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+    .choice input:checked + label::before { border: 4px solid var(--accent); }
+    .choice input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .place-order { grid-column: 1 / -1; width: 100%; min-height: 48px; margin-top: 4px; padding: 12px 18px; border: 1px solid var(--accent); border-radius: 3px; background: var(--accent); color: #fffaf3; font-weight: 700; transition: background .2s, transform .2s; }
+    .place-order:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent-dark); background: var(--accent-dark); }
+    .place-order:disabled { cursor: not-allowed; opacity: .6; }
+    .payment-note { grid-column: 1 / -1; margin: -7px 0 0; color: var(--muted); font-size: .78rem; }
+    .pincode-error { color: #b42318; font-size: .8rem; }
+    .checkout-empty { padding: 36px 24px; border: 1px solid var(--line); background: var(--surface); text-align: center; }
+    .checkout-empty[hidden], .checkout-layout[hidden] { display: none; }
+    .checkout-empty h2 { margin-bottom: 8px; font-size: 1.65rem; }
+    .checkout-empty p { color: var(--muted); }
+    .button { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 10px 17px; border: 1px solid var(--accent); border-radius: 3px; background: var(--accent); color: #fffaf3; font-size: .88rem; font-weight: 700; }
+    .button:hover { border-color: var(--accent-dark); background: var(--accent-dark); }
+    .checkout-error { grid-column: 1 / -1; margin: 0; color: var(--accent-dark); font-size: .85rem; }
+    footer { border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; min-height: 76px; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: .82rem; }
+    .footer-inner p { margin: 0; }
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 36px, 560px); }
+      .checkout-layout { grid-template-columns: 1fr; }
+      .summary-panel { order: 2; }
+      .details-panel { order: 1; }
+    }
+    @media (max-width: 480px) {
+      .wrap { width: calc(100% - 28px); }
+      .topbar { min-height: 72px; gap: 12px; }
+      .brand { gap: 8px; }
+      .brand-mark { width: 34px; }
+      .brand-name { font-size: 1rem; }
+      .cart-nav { gap: 12px; font-size: .8rem; }
+      main { padding-block: 44px 62px; }
+      .page-heading { align-items: start; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+      .details-panel, .summary-panel { padding: 18px 15px; }
+      .checkout-form { grid-template-columns: 1fr; gap: 12px; }
+      .field.full, .place-order, .payment-note { grid-column: auto; }
+      .choice label { padding-inline: 8px; font-size: .76rem; }
+      .footer-inner { align-items: flex-start; flex-direction: column; justify-content: center; padding-block: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar wrap">
+    <a class="brand" href="index.html#home" aria-label="Good Ground Cafe home"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-name">Good Ground Cafe</span></a>
+    <nav class="cart-nav" aria-label="Checkout navigation"><a href="index.html#menu">Menu</a><a href="cart.html">Cart <span class="cart-count" id="cart-count">0</span></a></nav>
+  </header>
+  <main class="wrap">
+    <div class="page-heading"><div><p class="eyebrow">ONE LAST THING</p><h1>Checkout.</h1></div><a class="back-link" href="cart.html">Back to cart</a></div>
+    <div class="checkout-empty" id="checkout-empty" hidden>
+      <h2>Your cart is empty.</h2><p>Add something from the menu before checking out.</p><a class="button" href="index.html#menu">Explore the menu</a>
+    </div>
+    <div class="checkout-layout" id="checkout-layout">
+      <aside class="panel summary-panel" aria-labelledby="summary-title">
+        <div class="panel-heading"><div><p class="eyebrow">THE GOOD STUFF</p><h2 id="summary-title">Order summary</h2></div><span class="item-count" id="summary-count"></span></div>
+        <div class="summary-items" id="summary-items"></div>
+        <div class="summary-subtotal"><span>Subtotal</span><strong id="summary-subtotal">₹0.00</strong></div>
+        <div class="summary-discounts" id="summary-discounts"></div>
+        <div class="summary-total"><span>Total after offers</span><strong id="summary-total">₹0.00</strong></div>
+      </aside>
+      <section class="panel details-panel" aria-labelledby="details-title">
+        <div class="panel-heading"><div><p class="eyebrow">DELIVERY DETAILS</p><h2 id="details-title">Where should we find you?</h2></div></div>
+        <p class="payment-note">We deliver only in Chennai</p>
+        <p class="payment-note">Cafe location: Good Ground Cafe, 12 Cathedral Road, Gopalapuram, Chennai, Tamil Nadu 600086</p>
+        <form class="checkout-form" id="checkout-form" novalidate>
+          <div class="field full"><label for="customer-name">Full name</label><input id="customer-name" name="name" type="text" autocomplete="name" maxlength="120" required></div>
+          <div class="field full"><label for="customer-phone">Phone number</label><input id="customer-phone" name="phone" type="tel" autocomplete="tel" maxlength="30" required></div>
+          <div class="field full"><label for="customer-email">Email (optional)</label><input id="customer-email" name="email" type="email" autocomplete="email" maxlength="254"></div>
+          <div class="field full"><label for="customer-address">Full address</label><textarea id="customer-address" name="address" autocomplete="street-address" maxlength="300" required></textarea></div>
+          <div class="field"><label for="customer-city">City</label><input id="customer-city" name="city" type="text" value="Chennai" autocomplete="address-level2" readonly required></div>
+          <div class="field"><label for="customer-pincode">Pincode</label><input id="customer-pincode" name="pincode" type="text" inputmode="numeric" autocomplete="postal-code" pattern="600[0-9]{3}" title="Enter a 6-digit Chennai pincode starting with 600." maxlength="6" aria-describedby="pincode-error" required><span class="pincode-error" id="pincode-error" role="alert">Sorry, we deliver only within Chennai (pincodes starting with 600).</span></div>
+          <fieldset class="field full"><legend>Delivery or pickup</legend><div class="choice-row"><div class="choice"><input id="fulfillment-delivery" name="fulfillment" type="radio" value="Delivery" required><label for="fulfillment-delivery">Delivery</label></div><div class="choice"><input id="fulfillment-pickup" name="fulfillment" type="radio" value="Pickup" required><label for="fulfillment-pickup">Pickup</label></div></div></fieldset>
+          <fieldset class="field full"><legend>Payment option</legend><div class="choice-row"><div class="choice"><input id="payment-cod" name="payment" type="radio" value="Cash on Delivery" required><label for="payment-cod">Cash on Delivery</label></div><div class="choice"><input id="payment-upi" name="payment" type="radio" value="UPI" required><label for="payment-upi">UPI</label></div></div></fieldset>
+          <p class="payment-note">Payment is only a selection here. No payment will be processed.</p>
+          <p class="checkout-error" id="checkout-error" role="alert" hidden></p>
+          <button class="place-order" type="submit" disabled>Place Order <span aria-hidden="true">→</span></button>
+        </form>
+      </section>
+    </div>
+  </main>
+  <footer><div class="footer-inner wrap"><a class="brand" href="index.html#home"><span class="brand-mark" aria-hidden="true">G</span><span class="brand-name">Good Ground Cafe</span></a><p>Good Ground Cafe, 12 Cathedral Road, Gopalapuram, Chennai, Tamil Nadu 600086</p><p>Good coffee. Good company. Every day.</p><p>© Good Ground Cafe</p></div></footer>
+</body>
+</html>
